@@ -1,10 +1,17 @@
 # CognOps/streamlit_app.py
 
 import streamlit as st
-from agent_clients import call_retriever_agent, call_analyzer_agent, call_planner_agent, call_reporter_agent
-import os
 from dotenv import load_dotenv
+import os
 import requests
+from retriever.retriever_agent import run_retriever
+from analyzer.analyzer_agent import run_analyzer
+from planner.planner_agent import run_planner
+from reporter.reporter_agent import run_reporter
+from crew.run_cognops_crew import run_cognops_crew
+import sys
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 load_dotenv()
 
@@ -43,40 +50,40 @@ selected_title = st.selectbox("Select an Incident", titles)
 query = next(
     (full for title, full in all_issues if title == selected_title), "")
 
-st.code(query, language="text")
+if st.button("Preview Selected Incident"):
+    st.code(query, language="text")
 
-with st.expander("🛠️ Advanced Options"):
-    mode = st.selectbox("Retriever Mode", ["hybrid", "rag", "live"])
+# Run the CognOps crew end-to-end
+if st.button("Run CognOps Crew (All Agents)"):
+    with st.spinner("Running full agent pipeline..."):
+        result = run_cognops_crew(query)
+        st.success("CognOps Agent Output")
+        st.json(result)
 
-# Agent Panels
+# Individual agent buttons
 st.markdown("---")
-st.subheader("Retriever Agent")
+st.caption("Agents powered by CrewAI: Retriever → Analyzer → Planner → Reporter")
+
 if st.button("Run Retriever Agent"):
-    with st.spinner("Calling Retriever Agent..."):
-        retriever_response = call_retriever_agent(query, mode)
-        st.success("Response from Retriever Agent")
-        st.json(retriever_response)
+    with st.spinner("Running Retriever..."):
+        result = run_retriever(query)
+        st.success("Retriever Output")
+        st.json(result)
 
-st.markdown("---")
-st.subheader("Analyzer Agent")
 if st.button("Run Analyzer Agent"):
-    with st.spinner("Calling Analyzer Agent..."):
-        analyzer_response = call_analyzer_agent(query)
-        st.success("Response from Analyzer Agent")
-        st.json(analyzer_response)
+    with st.spinner("Running Analyzer..."):
+        result = run_analyzer(query)
+        st.success("Analyzer Output")
+        st.json(result)
 
-st.markdown("---")
-st.subheader("Planner Agent")
 if st.button("Run Planner Agent"):
-    with st.spinner("Calling Planner Agent..."):
-        planner_response = call_planner_agent(query)
-        st.success("Response from Planner Agent")
-        st.json(planner_response)
+    with st.spinner("Running Planner..."):
+        result = run_planner(query)
+        st.success("Planner Output")
+        st.json(result)
 
-st.markdown("---")
-st.subheader("Reporter Agent")
 if st.button("Run Reporter Agent"):
-    with st.spinner("Calling Reporter Agent..."):
-        reporter_response = call_reporter_agent(query)
-        st.success("Response from Reporter Agent")
-        st.json(reporter_response)
+    with st.spinner("Running Reporter..."):
+        result = run_reporter(query)
+        st.success("Reporter Output")
+        st.json(result)
