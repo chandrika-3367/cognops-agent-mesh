@@ -1,0 +1,42 @@
+# Bytecode and cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environments
+.venv/
+venv/
+env/
+.uv/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Environment variables
+.env
+*.env
+
+# Notebooks or temp logs
+*.ipynb_checkpoints
+*.log
+
+# Compiled files
+*.so
+*.out
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+
+# Installer backups
+pip-wheel-metadata/
+
+# Streamlit
+.streamlit/config.toml
